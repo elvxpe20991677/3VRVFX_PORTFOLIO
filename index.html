@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO | Motion Designer</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. CONFIGURATION & VARIABLES --- */
+        :root {
+            --bg-color: #111111;
+            --text-color: #f0f0f0;
+            --accent-color: #ffffff;
+            --cursor-size: 15px;
+            --container-padding: 4vw;
+            --easing: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none; /* Curseur natif caché */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 2. CUSTOM CURSOR --- */
+        .cursor-dot {
+            position: fixed;
+            top: 0; left: 0;
+            width: 6px; height: 6px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 1px solid rgba(240, 240, 240, 0.5);
+            border-radius: 50%;
+            z-index: 9998;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s var(--easing), height 0.3s var(--easing), background-color 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: #111;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s;
+        }
+
+        body.hover-project .cursor-outline {
+            width: 80px;
+            height: 80px;
+            background-color: #fff;
+            border-color: #fff;
+            mix-blend-mode: exclusion;
+        }
+
+        body.hover-project .cursor-text {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        body.hover-link .cursor-outline {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            border-color: transparent;
+        }
+
+        /* --- 3. LAYOUT --- */
+        .container {
+            padding: 0 var(--container-padding);
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            height: 80vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3.5rem, 14vw, 16rem);
+            font-weight: 700;
+            line-height: 0.85;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+
+        .line-mask {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title span {
+            display: block;
+            transform: translateY(120%);
+            animation: textReveal 1.2s var(--easing) forwards;
+        }
+
+        .hero-title .line-1 span { animation-delay: 0.1s; }
+        .hero-title .line-2 span { animation-delay: 0.3s; }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 0.8s;
+            padding-left: 0.5vw;
+        }
+
+        /* --- 5. FILTER NAVIGATION --- */
+        .filter-nav {
+            padding: 2rem 0 4rem 0;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+
+        .filter-list {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .filter-btn {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            background: none;
+            border: none;
+            color: #888;
+            padding: 0;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .filter-btn:hover { color: #fff; }
+        .filter-btn.active { color: #fff; }
+
+        .filter-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+        }
+
+        /* --- 6. GRID GALLERY --- */
+        .gallery {
+            padding-bottom: 10vh;
+            width: 100%;
+            min-height: 50vh;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4vw;
+        }
+
+        .project-item {
+            position: relative;
+            background-color: #1a1a1a;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            border-radius: 2px; 
+            transition: opacity 0.4s var(--easing), transform 0.4s var(--easing);
+        }
+
+        .project-item.hidden { display: none; }
+        
+        .project-item.fade-in {
+            animation: itemFadeIn 0.6s var(--easing) forwards;
+        }
+
+        .media-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: block;
+        }
+
+        .project-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+            filter: saturate(0) contrast(1.1);
+        }
+
+        .project-item:hover .project-thumb { opacity: 0; }
+        .project-item:hover .project-video { opacity: 1; }
+
+        .project-meta {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .project-item:hover .project-meta {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .meta-title { font-size: 1rem; font-weight: 600; text-transform: uppercase; }
+        .meta-cat { font-size: 0.75rem; color: #ccc; }
+
+        /* --- 7. FOOTER --- */
+        .footer {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .footer-mail {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 300;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 5px;
+            transition: border-color 0.3s, color 0.3s;
+        }
+
+        .footer-mail:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        /* --- 8. ANIMATIONS --- */
+        @keyframes textReveal { to { transform: translateY(0); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes itemFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 9. RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .project-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .filter-list { gap: 1.5rem; overflow-x: auto; padding-bottom: 10px; }
+            .filter-btn { font-size: 0.9rem; white-space: nowrap; }
+            .cursor-dot, .cursor-outline { display: none; }
+            * { cursor: auto !important; }
+            .project-meta { opacity: 1; transform: translateY(0); background: rgba(0,0,0,0.5); padding: 5px 10px; }
+            .project-thumb { filter: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline>
+        <span class="cursor-text">PLAY</span>
+    </div>
+
+    <main class="container">
+        
+        <header class="hero">
+            <h1 class="hero-title">
+                <span class="line-mask line-1">
+                    <span>Elvis</span>
+                </span>
+                <span class="line-mask line-2">
+                    <span>PERROS</span>
+                </span>
+            </h1>
+            <div class="hero-subtitle">
+                Motion Designer & Video Editor
+            </div>
+        </header>
+
+        <nav class="filter-nav">
+            <ul class="filter-list">
+                <li><button class="filter-btn active hover-link" data-filter="featured">Accueil</button></li>
+                <li><button class="filter-btn hover-link" data-filter="motion">Motion Design</button></li>
+                <li><button class="filter-btn hover-link" data-filter="fiction">Fiction / Docu</button></li>
+                <li><button class="filter-btn hover-link" data-filter="social">Réseaux Sociaux</button></li>
+            </ul>
+        </nav>
+
+        <section class="gallery">
+            <div class="project-grid" id="projectGrid">
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1lYFiWVdc0cCKZSN7TdsHGXWoZJTjKMLy/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 1</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover1.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet1.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1VwU-CZ10KraNsbTU079rKvWHQ0AnYCHk/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 7</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover7.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet7.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1zO-YNvgzdw7AK3tFelOAJ8qxvSL48Vqo/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 8</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover8.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet8.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1Jss98wrgxVTlnZP0ycqL-YDO_7u6APFU/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 13</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover13.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet13.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1V5bzlu9LsnXePdOVM-UC-u2CFq7w6_u3/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 16</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover16.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet16.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1VYgUEkG3h4YSTaAGcWeJmmdvw_CgIhdp/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 17</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover17.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet17.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1zNddDBbYE79S8_fHs2Wfu8iIaw3C2Fj_/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 18</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover18.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet18.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1EDrYQT8aDUnBI_s3JPc5J-QvhBgTkOLl/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 19</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover19.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet19.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1IDI2yjT6VwmJSfuKtCGk5nKEYQqaXSYC/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 20</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover20.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet20.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="motion" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1aiXu7RrS6SXcyqWLyEB06iP7QkqG8X5a/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 21</div>
+                            <div class="meta-cat">Motion Design</div>
+                        </div>
+                        <img src="assets/cover21.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet21.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1IPbNWbakVbxOTtXaUeB-ghFUCuCoynU2/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 2</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover2.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet2.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1-fa482so41z8b5fzKMWPiQHra7UwV8R_/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 3</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover3.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet3.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/197Y8he967PQoP0mOd2XVcWZVmbSdWS6X/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 4</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover4.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet4.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/11vOglsgqMkOBhEoVEoQlc6beYrFIE9bZ/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 6</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover6.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet6.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1qxzsnHsT87XGhpbniJ8OFsh0IYAjtaRT/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 9</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover9.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet9.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="fiction" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1C4XPmuHdv48JLRGiIJ2hCNhYfd89EPxZ/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 12</div>
+                            <div class="meta-cat">Fiction / Docu</div>
+                        </div>
+                        <img src="assets/cover12.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet12.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1tQghgamArfgHhXLyNFjZrtseeI-VYNcv/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 5</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover5.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet5.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="true" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1NZQQsy80xv9WeHf0LtZWPfP3gnIvdIdE/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 10</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover10.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet10.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1_FPDEywTMy2dgfbO4J84HXi7Rcmj0o78/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 11</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover11.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet11.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1hrh02BpUFi_d6gnYfecAyZwyq3LRMuYs/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 14</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover14.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet14.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1TMl2nG6sB43kg5GYTQU5v7HQGmO6KqAT/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 15</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover15.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet15.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1yk95B02tDOcXdlZQ-13rW5sn-rUbPsjk/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 22</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover22.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet22.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+                <article class="project-item" data-category="social" data-featured="false" data-cursor-type="project">
+                    <a href="https://drive.google.com/file/d/1uVVUcqiwUNn9BSPonUrLi5t8w8h_lmbO/view?usp=sharing" target="_blank" class="media-container">
+                        <div class="project-meta">
+                            <div class="meta-title">Projet 23</div>
+                            <div class="meta-cat">Réseaux Sociaux</div>
+                        </div>
+                        <img src="assets/cover23.jpg" class="project-thumb" alt="Cover">
+                        <video class="project-video" muted loop playsinline preload="none"><source src="assets/projet23.mp4" type="video/mp4"></video>
+                    </a>
+                </article>
+
+            </div>
+        </section>
+
+        <footer class="footer">
+            <h2 class="footer-title">Travaillons Ensemble</h2>
+            <a href="mailto:contact@mondomaine.com" class="footer-mail" data-cursor-type="link">3vr.contact@gmail.com</a>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 1. GESTION DU FILTRAGE (Vanilla JS) ---
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectItems = document.querySelectorAll('.project-item');
+
+        // Fonction pour filtrer
+        function filterProjects(filterValue) {
+            projectItems.forEach(item => {
+                const category = item.dataset.category;
+                const isFeatured = item.dataset.featured === "true";
+
+                let shouldShow = false;
+
+                if (filterValue === 'featured') {
+                    if (isFeatured) shouldShow = true;
+                } else if (filterValue === 'all') {
+                    shouldShow = true;
+                } else {
+                    if (category === filterValue) shouldShow = true;
+                }
+
+                if (shouldShow) {
+                    item.classList.remove('hidden');
+                    item.classList.add('fade-in');
+                    item.addEventListener('animationend', () => {
+                        item.classList.remove('fade-in');
+                    }, { once: true });
+                } else {
+                    item.classList.add('hidden');
+                    item.classList.remove('fade-in');
+                }
+            });
+        }
+
+        // Init: Show featured by default
+        filterProjects('featured');
+
+        // Click listeners
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filterValue = btn.getAttribute('data-filter');
+                filterProjects(filterValue);
+            });
+        });
+
+
+        // --- 2. GESTION DU CURSEUR ---
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        const updateCursor = (isHovering, type) => {
+            if (isHovering) {
+                if (type === 'project') document.body.classList.add('hover-project');
+                else document.body.classList.add('hover-link');
+            } else {
+                document.body.classList.remove('hover-project', 'hover-link');
+            }
+        };
+
+        const allInteractive = document.querySelectorAll('[data-cursor-type], .filter-btn');
+        allInteractive.forEach(el => {
+            const type = el.getAttribute('data-cursor-type') === 'project' ? 'project' : 'link';
+            el.addEventListener('mouseenter', () => updateCursor(true, type));
+            el.addEventListener('mouseleave', () => updateCursor(false, type));
+        });
+
+
+        // --- 3. GESTION VIDEO ---
+        const cards = document.querySelectorAll('.project-item');
+        cards.forEach(card => {
+            const video = card.querySelector('video');
+            card.addEventListener('mouseenter', () => {
+                if (video && video.paused) video.play().catch(() => {});
+            });
+            card.addEventListener('mouseleave', () => {
+                if (video && !video.paused) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
